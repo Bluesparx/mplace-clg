@@ -5,15 +5,17 @@ import {User} from "../models/user.model.js";
 import { uploadOnCloud } from "../utils/cloudinary.js";
 
 
-const registerUser = asyncHandler( async (req,res) => {
-    const {fullname, email, username, password} = req.body
-    if(
-        [fullname, email, username, password].some((field) => field?.trim()==="")
-    ){
-        throw new ApiError(400, "All fields are required.")
+const registerUser = asyncHandler(async (req, res) => {
+    const {fullname, email, username, password } = req.body;
+    
+    if (!fullname || !email || !username || !password) {
+        throw new ApiError(400, "All fields are required.");
     }
-    const existingmail = await User.findOne(email)
-    const existinguser = await User.findOne(username)
+    if ([fullname, email, username, password].some((field) => field.trim()==="")) {
+        throw new ApiError(400, "All fields are required and cannot be empty.");
+    }
+    const existingmail = await User.findOne({ email });
+    const existinguser = await User.findOne({ username });
     if(existinguser){
         throw new ApiError(409, "User with username already exists.")
     }
